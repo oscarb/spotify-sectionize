@@ -1,7 +1,7 @@
 {
-    "name": "docker-node-template",
+    "name": "spotify-sectionize",
     "version": "1.0.0",
-    "description": "Template for getting started with Node.js and Docker development",
+    "description": "Find sections in a Spotify playlist",
     "main": "app.js",
     "scripts": {
         "start": "node app.js",
