@@ -1,0 +1,15 @@
+{
+    "name": "docker-node-template",
+    "version": "1.0.0",
+    "description": "Template for getting started with Node.js and Docker development",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon --inspect=0.0.0.0 app.js"
+    },
+    "author": "",
+    "dependencies": {
+        "express": "^4.18.2"
+    },
+    "license": "ISC"
+}
