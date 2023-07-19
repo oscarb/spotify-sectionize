@@ -94,6 +94,9 @@ async function sectionizePlaylist(id = '', retryCount = 0) {
         const trackNames = playlist.tracks.items.map(item => item.track.name)
         const sections = sectionize(trackNames)
 
+        console.log(sections)
+        console.log(Object.values(sections))
+
         return Object.values(sections)
 
     } catch (err) {
@@ -120,8 +123,8 @@ function sectionize(trackNames) {
         const name = trackNames[i]
         const sectionName = name.slice(0, name.lastIndexOf(' - '))
         
-        if(!(sectionName in indexes)) {
-            indexes[sectionName] = i
+        if (!(sectionName in sections)) {
+            sections[sectionName] = i
         }
     }
 
