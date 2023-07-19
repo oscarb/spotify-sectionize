@@ -59,6 +59,19 @@ app.get('/callback', async (req, res) => {
     }
 });
 
+app.get('/sectionize', async (req, res) => {
+    // Sectionize 
+    try {
+        const playlistId = req.query.playlist;
+        const sections = await sectionizePlaylist(playlistId)
+        res.json(sections);
+    } catch (err) {
+        console.log(err)
+        res.json([0])
+    }
+});
+
+
 app.listen(PORT, HOST, () => {
     console.log(`Running on http://${HOST}:${PORT}`)
 });
@@ -71,4 +84,67 @@ async function initStorage() {
 
     spotifyApi.setAccessToken(accessToken)
     spotifyApi.setRefreshToken(refreshToken)
+}
+
+async function sectionizePlaylist(id = '', retryCount = 0) {
+    console.log('/sectionize requested, playlist', id)
+    
+    try {
+        const playlist = await getPlaylistWithTracks(id)
+        const trackNames = playlist.tracks.items.map(item => item.track.name)
+        const sections = sectionize(trackNames)
+
+        return Object.values(sections)
+
+    } catch (err) {
+        if (err.statusCode == 401 && retryCount < 5) {
+            // Access token likely expired, refresh token
+            let data = await spotifyApi.refreshAccessToken()
+            console.log("Refreshed token. mew token: " + JSON.stringify(data))
+            spotifyApi.setAccessToken(data.body['access_token'])
+            await storage.set('accessToken', data.body['access_token'])
+
+            return await sectionizePlaylist(id, ++retryCount)
+        } else {
+            return err
+        }
+    }
+}
+
+function sectionize(trackNames) {
+    const sections = {}; 
+
+    console.log(trackNames)
+
+    for (let i = 0; i < trackNames.length; i++) {
+        const name = trackNames[i]
+        const sectionName = name.slice(0, name.lastIndexOf(' - '))
+        
+        if(!(sectionName in indexes)) {
+            indexes[sectionName] = i
+        }
+    }
+
+    return sections
+}
+
+async function getPlaylistWithTracks(id) {
+    const playlist = (await spotifyApi.getPlaylist(id)).body
+
+    // If there are more tracks than the limit (100 by default)
+    if (playlist.tracks.total > playlist.tracks.limit) {
+
+        // Divide the total number of track by the limit to get the number of API calls
+        for (let i = 1; i < Math.ceil(playlist.tracks.total / playlist.tracks.limit); i++) {
+
+            const tracksToAdd = (await spotifyApi.getPlaylistTracks(id, {
+                offset: playlist.tracks.limit * i // Offset each call by the limit * the call's index
+            })).body;
+
+            // Push the retreived tracks into the array
+            tracksToAdd.items.forEach((item) => playlist.tracks.items.push(item));
+        }
+    }
+
+    return playlist
 }
