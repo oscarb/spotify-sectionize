@@ -1,0 +1,12 @@
+services:
+
+  spotify-sectionize: 
+    build: .
+    container_name: spotify-sectionize
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - ${PORT:-12345}:8080
+    env_file: .env
+    command: npm run dev
