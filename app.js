@@ -87,15 +87,12 @@ async function initStorage() {
 }
 
 async function sectionizePlaylist(id = '', retryCount = 0) {
-    console.log('/sectionize requested, playlist', id)
+    console.log(new Date(), '/sectionize requested, playlist', id)
     
     try {
         const playlist = await getPlaylistWithTracks(id)
         const trackNames = playlist.tracks.items.map(item => item.track.name)
         const sections = sectionize(trackNames)
-
-        console.log(sections)
-        console.log(Object.values(sections))
 
         return Object.values(sections)
 
@@ -116,8 +113,6 @@ async function sectionizePlaylist(id = '', retryCount = 0) {
 
 function sectionize(trackNames) {
     const sections = {}; 
-
-    console.log(trackNames)
 
     for (let i = 0; i < trackNames.length; i++) {
         const name = trackNames[i]
