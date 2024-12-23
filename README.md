@@ -35,7 +35,7 @@ Thus, the service can be used to easily start playing a section of a Spotify pla
 
 * Clone this repository:
     ```
-    git clone https://github.com/oscarb/spotify-sectionize
+    git clone https://github.com/oscarb/spotify-sectionize.git
     ```
 * Copy the `.env.sample` into a `.env` file and change the variablees to match your host, port and Spotify Client ID and Client Secret.
 
