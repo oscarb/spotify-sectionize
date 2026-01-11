@@ -64,7 +64,8 @@ app.get('/sectionize', async (req, res) => {
     try {
         const playlistId = req.query.playlist;
         const sections = await sectionizePlaylist(playlistId)
-        res.json(sections);
+        const result = {'indexes': sections}
+        res.json(result);
     } catch (err) {
         console.log(err)
         res.json([0])
